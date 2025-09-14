@@ -9,8 +9,9 @@
     "lint": "eslint",
     "prepare": "husky install",
     "deploy": "vercel --prod",
-    "prettier-fix": "prettier --write ."
-  },
+    "prettier-fix": "prettier --write .",
+    "prettier": "prettier --write ."
+    },
   "dependencies": {
     "next": "15.5.3",
     "react": "19.1.0",
