@@ -9,7 +9,6 @@ on:
 permissions:
   contents: read
   pull-requests: write
-
 jobs:
   quality-checks:
     name: "✅ Lint & Format"
