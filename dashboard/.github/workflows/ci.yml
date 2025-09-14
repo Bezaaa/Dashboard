@@ -1,4 +1,5 @@
-name: Next.js CI/CD Pipelinels -la .git/hooks/
+name: Next.js CI/CD Pipeline
+
 on:
   push:
     branches: [main, dev]
@@ -8,62 +9,60 @@ on:
 permissions:
   contents: read
   pull-requests: write
+
 jobs:
   quality-checks:
     name: "✅ Lint & Format"
     runs-on: ubuntu-latest
     steps:
       - name: ⬇️ Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: 🟢 Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
           node-version: "20"
           cache: 'npm'
 
       - name: 📦 Install dependencies
         run: npm ci
-      - name: 🔧 Install Husky Hooks
-        run: npm run prepare # This runs "husky install"
-
-      - name: ✨ Run Prettier (via Husky)
-        run: npx husky run pre-commit
-        # This executes all commands defined in the 'pre-commit' hook
-
-      - name: 🔬 Run Linter (Next.js ESLint)
-        run: npm run lint
-
 
       - name: ✨ Run Prettier
-        run: npm run format 
+        run: npm run prettier
 
       - name: 🔬 Run Linter (Next.js ESLint)
         run: npm run lint
-       
 
   deploy:
     name: "🚀 Deploy to Vercel"
-    needs: quality-checks 
+    needs: quality-checks
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' 
+    if: github.event_name == 'push'
     steps:
       - name: ⬇️ Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: 🚀 Deploy to Vercel
-        id: deploy
-        uses: vercel/action@v28
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.ORG_ID }}    
-          vercel-project-id: ${{ secrets.PROJECT_ID }} 
-          vercel-args: ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} 
+        id: vercel-deploy
+        run: |
+          # Install Vercel CLI
+          npm install -g vercel
+
+          # Link the project automatically with --yes
+          vercel link --yes --token ${{ secrets.VERCEL_TOKEN }}
+
+          # Deploy the project (use --prod for production URL)
+          DEPLOY_OUTPUT=$(vercel --prod --token ${{ secrets.VERCEL_TOKEN }} 2>&1)
+
+          # Extract the deployment URL from output
+          DEPLOY_URL=$(echo "$DEPLOY_OUTPUT" | grep -o 'https://[^[:space:]]*' | head -1)
+          echo "DEPLOY_URL=$DEPLOY_URL" >> $GITHUB_ENV
+          echo "Deployment URL: $DEPLOY_URL"
 
       - name: 📝 Print Deployment URL
         run: |
-          echo "Preview URL: ${{ steps.deploy.outputs.preview-url }}"
-          echo "Production URL: https://your-actual-production-url.vercel.app"
+          echo "Production Deployment URL: $DEPLOY_URL"
+          echo "Production URL: https://dashboard-mu-azure-39.vercel.app"
 
   comment-on-pr:
     name: "💬 Comment on PR"
@@ -79,5 +78,5 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `🚀 **Deployment successful!**\n\n✅ All quality checks passed.\n🔗 **Preview URL:** ${{ needs.deploy.outputs.preview-url }}\n🔗 **Production URL:** https://dashboard-mu-azure-39.vercel.app`
+              body: `🚀 **Deployment successful!**\n\n✅ All quality checks passed.\n🔗 **Preview URL:** ${{ env.DEPLOY_URL }}\n🔗 **Production URL:** https://dashboard-mu-azure-39.vercel.app`
             })
