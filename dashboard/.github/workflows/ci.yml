@@ -25,6 +25,16 @@ jobs:
 
       - name: 📦 Install dependencies
         run: npm ci
+      - name: 🔧 Install Husky Hooks
+        run: npm run prepare # This runs "husky install"
+
+      - name: ✨ Run Prettier (via Husky)
+        run: npx husky run pre-commit
+        # This executes all commands defined in the 'pre-commit' hook
+
+      - name: 🔬 Run Linter (Next.js ESLint)
+        run: npm run lint
+
 
       - name: ✨ Run Prettier
         run: npm run format 
