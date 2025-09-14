@@ -1,1 +1,6 @@
-npm test
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Run your quality checks
+npm run lint
+npx prettier --write --list-different .
