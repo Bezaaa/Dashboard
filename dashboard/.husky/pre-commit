@@ -3,7 +3,7 @@
 echo -e '\n    🏗️👷 Styling, testing and building your project before committing \n'
 echo -e '🚧 Checking Prettier formatting...\n'
 
-# Check Prettier standards
+
 npm run check-prettier ||
 (
     echo '❌ Prettier failed in checking. Run "npm run prettier-fix" to let prettier format your files.';
