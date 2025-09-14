@@ -1,4 +1,4 @@
-name: Next.js CI/CD Pipeline
+name: Next.js CI/CD Pipelinels -la .git/hooks/
 on:
   push:
     branches: [main, dev]

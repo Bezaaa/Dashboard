@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "prepare": "husky",
+    "postinstall": "husky",
     "deploy": "vercel --prod"
   },
   "dependencies": {
