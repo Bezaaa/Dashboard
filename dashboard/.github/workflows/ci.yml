@@ -1,5 +1,4 @@
 name: Next.js CI/CD Pipeline
-
 on:
   push:
     branches: [main, dev]
