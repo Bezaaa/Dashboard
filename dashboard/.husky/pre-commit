@@ -1,4 +1,4 @@
-
+cd /dashboard
 
 echo -e '\n    🏗️👷 Styling, testing and building your project before committing \n'
 echo -e '🚧 Checking Prettier formatting...\n'
